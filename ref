@@ -1,0 +1,36 @@
+customerId
+ first_name
+    last_name 
+    email
+    gender
+	date_of_birth
+	phone
+	address
+	photo
+	aadhaar
+    secureMobile
+    GuarantorName,
+    GuarantorMobile
+    GuarantorAddress
+    GuarantorAathaar
+
+    total_amount
+    down_amount
+   loan_amount
+   interest_rate
+   tenure_months
+   emi_amount
+   repayment_frequency
+due_Date
+
+vehicle_type
+   vehicle_model
+    vehicle_version
+    vehicle_colore
+    vehicle_engine
+	vehicle_chasis
+    vehicle_dealers
+    registration_no
+
+
+               '1', 'kannan', 'kannan11071985@gmail.com', 'password123', '2026-01-27 19:48:49'
