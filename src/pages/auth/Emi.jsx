@@ -14,9 +14,9 @@ const defaultModal = {
 };
 
 const numberToWords = (amount) => {
-  const ones = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
-    "Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-  const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+    "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
   const toWords = (n) => {
     if (n === 0) return "";
     if (n < 20) return ones[n] + " ";
@@ -85,12 +85,15 @@ const Emi = () => {
   };
 
   const payableCustomers = customers.filter((c) => !isClosedCustomer(c));
+  const searchQuery = searchTerm.trim().toLowerCase();
 
-  const filteredCustomers = payableCustomers.filter((c) =>
-    `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.customer_id || c.customerId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.registration_no || "").toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCustomers = searchQuery
+    ? payableCustomers.filter((c) =>
+      `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery) ||
+      (c.customer_id || c.customerId || "").toLowerCase().includes(searchQuery) ||
+      (c.registration_no || "").toLowerCase().includes(searchQuery)
+    )
+    : [];
 
   const openModal = async (customer) => {
     const emi = customer.emi_amount || "0.00";
@@ -209,15 +212,15 @@ const Emi = () => {
     doc.text("Thanking You,", 90, y); y += 5;
     doc.text("For SRI VINAYAGA FINANCE", 130, y); y += 20;
     doc.text("Authorised Signatory", 130, y);
-    y= 97
-     doc.setFontSize(12, "bold"); ;
+    y = 97
+    doc.setFontSize(12, "bold");;
     doc.text("SRI VINAYAKA FINANCE", lx, y); y += 5;
     doc.text("60/11, Ushwan Beevi Complex,", lx, y); y += 5;
     doc.text("K. K. Road, Sayalgudi - 623120", lx, y); y += 5;
     doc.text("Cell: 9840797266, 8190980810", lx, y); y += 5;
 
     y = 120;
-    doc.setFontSize(7);( {align: "left" });
+    doc.setFontSize(7); ({ align: "left" });
     doc.text("Terms and Conditions:", lx, y); y += 5;
     doc.text("* Customer is advised to get receipt immediately for your EMI payments.", lx, y); y += 5;
     doc.text("* Customer is liable to pay penalty charges and penalty interest for delayed EMI payments.", lx, y); y += 5;
@@ -316,11 +319,10 @@ const Emi = () => {
                     <td className="px-4 py-2">{c.registration_no}</td>
                     <td className="px-4 py-2 font-semibold">₹{formatMoney(c.current_balance)}</td>
                     <td className="px-4 py-2">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                        getCustomerStatus(c) === "Closed"
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${getCustomerStatus(c) === "Closed"
                           ? "bg-green-100 text-green-700"
                           : "bg-blue-100 text-blue-700"
-                      }`}>
+                        }`}>
                         {getCustomerStatus(c)}
                       </span>
                     </td>

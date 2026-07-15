@@ -6,7 +6,7 @@ import { FaSearch, FaCalculator, FaTimes, FaCheckCircle, FaUser, FaInfoCircle, F
 const Forkcloser = () => {
   const { data: customers = [], isLoading } = useFetchAllCustomersQuery();
   const [forecloseLoan, { isLoading: isProcessing }] = useForecloseLoanMutation();
-  
+
   const [search, setSearch] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [foreclosureData, setForeclosureData] = useState({
@@ -32,14 +32,17 @@ const Forkcloser = () => {
     return status !== "closed" && paidAmount > 0;
   });
 
-  const filteredCustomers = customers.filter(c => {
-    const status = (c.loan_status || c.payment_status || "").toLowerCase();
-    const isClosed = ["closed", "completed", "foreclosed"].includes(status);
-    if (isClosed) return false;
+  const searchQuery = search.trim().toLowerCase();
+  const filteredCustomers = searchQuery
+    ? customers.filter(c => {
+      const status = (c.loan_status || c.payment_status || "").toLowerCase();
+      const isClosed = ["closed", "completed", "foreclosed"].includes(status);
+      if (isClosed) return false;
 
-    return `${c.first_name} ${c.last_name}`.toLowerCase().includes(search.toLowerCase()) ||
-      (c.customer_id || "").toLowerCase().includes(search.toLowerCase());
-  });
+      return `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery) ||
+        (c.customer_id || "").toLowerCase().includes(searchQuery);
+    })
+    : [];
 
   const handleSelect = (customer) => {
     setSelectedCustomer(customer);
@@ -85,9 +88,9 @@ const Forkcloser = () => {
   };
 
   const numberToWords = (amount) => {
-    const ones = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
-      "Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-    const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+      "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
     const toWords = (n) => {
       if (n === 0) return "";
       if (n < 20) return ones[n] + " ";
@@ -288,13 +291,12 @@ const Forkcloser = () => {
                   <button
                     key={c.customer_id}
                     onClick={() => handleSelect(c)}
-                    className={`w-full text-left p-3 rounded-lg border transition-all ${
-                      selectedCustomer?.customer_id === c.customer_id 
-                        ? "bg-blue-600 text-white border-blue-600 shadow-md" 
+                    className={`w-full text-left p-3 rounded-lg border transition-all ${selectedCustomer?.customer_id === c.customer_id
+                        ? "bg-blue-600 text-white border-blue-600 shadow-md"
                         : "bg-white hover:bg-blue-50 border-gray-100"
-                    }`}
+                      }`}
                   >
-                    <p className="font-bold flex items-center gap-2"><FaUser className="text-xs"/> {c.first_name} {c.last_name}</p>
+                    <p className="font-bold flex items-center gap-2"><FaUser className="text-xs" /> {c.first_name} {c.last_name}</p>
                     <p className="text-xs opacity-80 mt-1">{c.customer_id} | Balance: ₹{c.current_balance}</p>
                   </button>
                 ))
@@ -330,60 +332,60 @@ const Forkcloser = () => {
 
                     return (
                       <>
-                  {/* Detailed Loan Summary */}
-                  <div className="mb-8">
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <FaInfoCircle /> Loan Summary Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <p className="text-xs text-gray-500 font-medium">Total Loan Amount</p>
-                        <p className="text-xl font-bold text-gray-800">₹{selectedCustomer.loan_amount || "0"}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">Contract Value</p>
-                      </div>
-                      <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-                        <p className="text-xs text-green-600 font-medium">Paid Amount</p>
-                        <p className="text-xl font-bold text-green-700">₹{totalPaid}</p>
-                        <p className="text-[10px] text-green-400 mt-1">Est. Total Collected</p>
-                      </div>
-                      <div className="p-4 bg-orange-50 rounded-lg border border-orange-100">
-                        <p className="text-xs text-orange-600 font-medium">EMIs Status</p>
-                        <div className="flex items-end gap-1">
-                          <p className="text-xl font-bold text-orange-700">
-                            {isTransactionsLoading ? "..." : paidEmis}
-                          </p>
-                          <p className="text-sm font-medium text-orange-600 mb-1">/ {tenure}</p>
+                        {/* Detailed Loan Summary */}
+                        <div className="mb-8">
+                          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <FaInfoCircle /> Loan Summary Details
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                              <p className="text-xs text-gray-500 font-medium">Total Loan Amount</p>
+                              <p className="text-xl font-bold text-gray-800">₹{selectedCustomer.loan_amount || "0"}</p>
+                              <p className="text-[10px] text-gray-400 mt-1">Contract Value</p>
+                            </div>
+                            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+                              <p className="text-xs text-green-600 font-medium">Paid Amount</p>
+                              <p className="text-xl font-bold text-green-700">₹{totalPaid}</p>
+                              <p className="text-[10px] text-green-400 mt-1">Est. Total Collected</p>
+                            </div>
+                            <div className="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                              <p className="text-xs text-orange-600 font-medium">EMIs Status</p>
+                              <div className="flex items-end gap-1">
+                                <p className="text-xl font-bold text-orange-700">
+                                  {isTransactionsLoading ? "..." : paidEmis}
+                                </p>
+                                <p className="text-sm font-medium text-orange-600 mb-1">/ {tenure}</p>
+                              </div>
+                              <p className="text-[10px] text-orange-400 mt-1">Installments Paid</p>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-[10px] text-orange-400 mt-1">Installments Paid</p>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-                      <p className="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <FaHistory className="text-gray-400"/> Balance EMI
-                      </p>
-                      <p className="text-3xl font-bold text-gray-800 mt-1">
-                        {remainingEmis}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">Remaining Installments</p>
-                    </div>
-                    <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
-                      <p className="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <FaWallet className="text-gray-400"/> Balance EMI Amount
-                      </p>
-                      <p className="text-3xl font-bold text-gray-800 mt-1">₹{calculateBalanceEmiAmount().toFixed(2)}</p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {remainingEmis} × ₹{parseFloat(selectedCustomer.emi_amount || 0).toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="p-5 bg-blue-50 rounded-xl border border-blue-200">
-                      <p className="text-sm text-blue-600 font-medium">Foreclosure Amount</p>
-                      <p className="text-3xl font-bold text-blue-700 mt-1">₹{calculateTotal()}</p>
-                      <p className="text-xs text-blue-400 mt-1">Balance EMI + Charge - Discount</p>
-                    </div>
-                  </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                          <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
+                            <p className="text-sm text-gray-500 font-medium flex items-center gap-2">
+                              <FaHistory className="text-gray-400" /> Balance EMI
+                            </p>
+                            <p className="text-3xl font-bold text-gray-800 mt-1">
+                              {remainingEmis}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">Remaining Installments</p>
+                          </div>
+                          <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
+                            <p className="text-sm text-gray-500 font-medium flex items-center gap-2">
+                              <FaWallet className="text-gray-400" /> Balance EMI Amount
+                            </p>
+                            <p className="text-3xl font-bold text-gray-800 mt-1">₹{calculateBalanceEmiAmount().toFixed(2)}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {remainingEmis} × ₹{parseFloat(selectedCustomer.emi_amount || 0).toFixed(2)}
+                            </p>
+                          </div>
+                          <div className="p-5 bg-blue-50 rounded-xl border border-blue-200">
+                            <p className="text-sm text-blue-600 font-medium">Foreclosure Amount</p>
+                            <p className="text-3xl font-bold text-blue-700 mt-1">₹{calculateTotal()}</p>
+                            <p className="text-xs text-blue-400 mt-1">Balance EMI + Charge - Discount</p>
+                          </div>
+                        </div>
                       </>
                     );
                   })()}
@@ -398,7 +400,7 @@ const Forkcloser = () => {
                           step="0.01"
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                           value={foreclosureData.additionalCharges}
-                          onChange={(e) => setForeclosureData({...foreclosureData, additionalCharges: e.target.value})}
+                          onChange={(e) => setForeclosureData({ ...foreclosureData, additionalCharges: e.target.value })}
                         />
                       </div>
                       <div>
@@ -410,7 +412,7 @@ const Forkcloser = () => {
                           step="0.01"
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                           value={foreclosureData.discount}
-                          onChange={(e) => setForeclosureData({...foreclosureData, discount: e.target.value})}
+                          onChange={(e) => setForeclosureData({ ...foreclosureData, discount: e.target.value })}
                         />
                         <p className="mt-1 text-xs text-gray-400">Discount Amount: ₹{calculateDiscountAmount()}</p>
                       </div>
@@ -425,7 +427,7 @@ const Forkcloser = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg h-28 focus:ring-2 focus:ring-blue-400 outline-none resize-none"
                         placeholder="Note reason for foreclosure or settlement details..."
                         value={foreclosureData.remarks}
-                        onChange={(e) => setForeclosureData({...foreclosureData, remarks: e.target.value})}
+                        onChange={(e) => setForeclosureData({ ...foreclosureData, remarks: e.target.value })}
                       />
                     </div>
                   </div>

@@ -41,37 +41,48 @@ const NewCustomer = () => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updated = { ...prev, [name]: value };
-      
+
       // Auto-calculate loan amount when total_amount or down_amount changes
       if (name === 'total_amount' || name === 'down_amount') {
         const total = parseFloat(name === 'total_amount' ? value : updated.total_amount) || 0;
         const down = parseFloat(name === 'down_amount' ? value : updated.down_amount) || 0;
         updated.loan_amount = Math.max(0, total - down).toString();
       }
-      
+
       // Auto-calculate EMI when loan_amount, interest_rate, or tenure_months changes
-      if (name === 'loan_amount' || name === 'interest_rate' || name === 'tenure_months' || 
-          (name === 'total_amount' || name === 'down_amount')) {
+      if (name === 'loan_amount' || name === 'interest_rate' || name === 'tenure_months' ||
+        (name === 'total_amount' || name === 'down_amount')) {
         const principal = parseFloat(updated.loan_amount) || 0;
         const rate = parseFloat(updated.interest_rate) || 0;
         const tenure = parseInt(updated.tenure_months) || 0;
-        
+
         if (principal > 0 && rate > 0 && tenure > 0) {
           const monthlyRate = rate / 100 / 12;
-          const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) / 
-                     (Math.pow(1 + monthlyRate, tenure) - 1);
+          const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) /
+            (Math.pow(1 + monthlyRate, tenure) - 1);
           updated.emi_amount = Math.round(emi).toString();
         }
       }
-      
+
       return updated;
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ...formData,
+      total_amount: Number(formData.total_amount) || 0,
+      down_amount: Number(formData.down_amount) || 0,
+      loan_amount: Number(formData.loan_amount) || 0,
+      interest_rate: Number(formData.interest_rate) || 0,
+      tenure_months: Number(formData.tenure_months) || 0,
+      emi_amount: Number(formData.emi_amount) || 0,
+    };
+
     try {
-      const result = await addCustomer(formData).unwrap();
+      const result = await addCustomer(payload).unwrap();
       console.log("Customer created successfully:", result);
       alert("Customer created successfully!");
       // Reset form
@@ -87,7 +98,7 @@ const NewCustomer = () => {
       });
     } catch (err) {
       console.error("Failed to create customer:", err);
-      alert("Failed to create customer: " + (err.data?.message || err.message));
+      alert("Failed to create customer: " + (err.data?.message || err.error || err.message));
     }
   };
 
@@ -95,7 +106,7 @@ const NewCustomer = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-center mb-8">New Customer Registration</h1>
-        
+
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md">
           {/* Personal Information */}
           <div className="mb-8">
