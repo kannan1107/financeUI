@@ -5,15 +5,6 @@ import logo from '../assets/LOG.png';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const menuItems = [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "New Customer", path: "/customer" },
-    { name: "EMI Paying", path: "/emi" },
-    { name: "Loan Status", path: "/loan" },
-    { name: "Customer Update", path: "/update" },
-    { name: "Foreclosure", path: "/close" },
-    { name: "List Out", path: "/list" },
-  ];
 
   const navLinkClass = "font-medium text-gray-700 transition hover:text-emerald-700";
 
@@ -27,35 +18,8 @@ const Navbar = () => {
           <img src={logo} alt="Vinayaga Fin" className="h-12 w-auto" />
         </Link>
 
-        <div className="flex items-center space-x-4">
+        <div className="hidden md:flex flex-wrap items-center gap-3">
           <Link to="/" className={navLinkClass}>Home</Link>
-
-          <div className="relative">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-2xl leading-none text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-              title="Menu"
-              aria-label="Open menu"
-              aria-expanded={isMenuOpen}
-            >
-              &hellip;
-            </button>
-
-            {isMenuOpen && (
-              <div className="absolute right-0 z-50 mt-3 w-52 overflow-hidden rounded-md border border-emerald-100 bg-white shadow-xl">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
 
           <Link to="/about" className={navLinkClass}>About Us</Link>
           <Link to="/contact" className={navLinkClass}>Contact</Link>
@@ -72,6 +36,60 @@ const Navbar = () => {
           >
             Logout
           </Link>
+        </div>
+
+        <div className="relative md:hidden">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-2xl leading-none text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+            title="Menu"
+            aria-label="Open menu"
+            aria-expanded={isMenuOpen}
+          >
+            •••
+          </button>
+
+          {isMenuOpen && (
+            <div className="absolute right-0 z-50 mt-3 min-w-[14rem] overflow-hidden rounded-md border border-emerald-100 bg-white shadow-xl">
+              <div className="py-2">
+                <Link
+                  to="/"
+                  className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/about"
+                  className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/contact"
+                  className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+                <Link
+                  to="/login"
+                  className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-emerald-50 hover:text-emerald-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block px-4 py-2.5 text-sm font-medium text-gray-900 bg-amber-100 hover:bg-amber-200 rounded-md mx-3 my-2 text-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </nav>
